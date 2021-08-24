@@ -1,8 +1,8 @@
-#include "TomRegex.h"
+#include "Regex.h"
 #include <iostream>
 using std::cin;
 
 int main() {
-    TomRegex test(cin);
+    Tom::Regex test(cin);
     return 0;
 }

@@ -1,6 +1,6 @@
-#include "TomRegex.h"
+#include "Regex.h"
 
-TomRegex::TomRegex(istream &input) {
+Tom::Regex::Regex(istream &input) {
     string line;
     while (input) {
         getline(input, line);

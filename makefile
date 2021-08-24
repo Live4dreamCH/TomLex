@@ -1,12 +1,12 @@
 .PHONY: all clean test
 
-test: TomRegex_test.out TomDFA_test.out
+test: Regex_test.out DFA_test.out
 
-TomRegex_test.out: TomRegex.h TomRegex.cpp TomRegex_test.cpp
-	g++ -std=c++11 -ggdb TomRegex.h TomRegex.cpp TomRegex_test.cpp -o TomRegex_test.out
+Regex_test.out: Regex.h Regex.cpp Regex_test.cpp
+	g++ -std=c++11 -ggdb Regex.h Regex.cpp Regex_test.cpp -o Regex_test.out
 
-TomDFA_test.out: TomDFA.h TomDFA.cpp TomDFA_test.cpp
-	g++ -std=c++11 -ggdb TomDFA.h TomDFA.cpp TomDFA_test.cpp -o TomDFA_test.out
+DFA_test.out: DFA.h DFA.cpp DFA_test.cpp
+	g++ -std=c++11 -ggdb DFA.h DFA.cpp DFA_test.cpp -o DFA_test.out
 
 clean:
 	rm *.out
