@@ -20,9 +20,8 @@ namespace Tom {
         state s0;
         unordered_set<state> final_states;
 
-        bool is_valid();
-
-        state func(const state &from, const char &ch, string &err_msg);
+        // 状态转移一步
+        state func(const state &from, const char &ch, string &err_msg) const;
 
     public:
         // 四元组定义，字母表为全体字符
@@ -33,6 +32,13 @@ namespace Tom {
         DFA(unordered_set<state> &S, unordered_set<char> &AB, NeiTable &f, state &S0, unordered_set<state> &F)
             : states(S), alphabet(AB), trans(f), s0(S0), final_states(F), use_alphabet(true) {}
 
-        bool accept(const string &str, state &final_state, string &err_msg);
+        // 校验DFA合法性, 0则合法
+        int check(string &err_msg) const;
+
+        // DFA是否接受一个串
+        bool accept(const string &str, state &final_state, string &err_msg) const;
+
+        // 展示DFA结构
+        string show() const;
     };
 } // namespace Tom

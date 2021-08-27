@@ -1,2 +1,2 @@
 # TomLex
-regex-NFA-DFA
+Regex-NFA-DFA
