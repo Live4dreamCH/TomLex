@@ -7,7 +7,7 @@ using std::pair;
 using std::string;
 using std::unordered_set;
 using std::vector;
-using Tom::NeiTable;
+using Tom::DFANei;
 using Tom::state;
 
 int main() {
@@ -34,7 +34,7 @@ int main() {
         {false,{}},
         {false,{}},
     };
-    vector<NeiTable> nei_list{
+    vector<DFANei> nei_list{
         {
             {0, {{'a', 1}, {'b', 2}}},
             {1, {{'a', 3}, {'b', 2}}},
@@ -154,13 +154,13 @@ int main() {
         // 用例初始化DFA
         unordered_set<state> &S = states_list[i], F = finals_list[i];
         pair<bool,unordered_set<char>> &AB = ab_list[i];
-        NeiTable &nei = nei_list[i];
-        state &s0 = start_list[i], final_state = 0;
+        DFANei &nei = nei_list[i];
+        state &start = start_list[i], final_state = 0;
         Tom::DFA *test;
         if(AB.first){
-            test = new Tom::DFA(S, AB.second, nei, s0, F);
+            test = new Tom::DFA(S, AB.second, nei, start, F);
         }else{
-            test = new Tom::DFA(S, nei, s0, F);
+            test = new Tom::DFA(S, nei, start, F);
         }
 
         // DFA合法性
