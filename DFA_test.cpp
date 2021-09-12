@@ -1,8 +1,8 @@
 #include "DFA.h"
 #include <algorithm>
 #include <iostream>
+#include <utility>
 #include <vector>
-#include<utility>
 using std::pair;
 using std::string;
 using std::unordered_set;
@@ -28,11 +28,11 @@ int main() {
         {1},
         {},
     };
-    vector<pair<bool,unordered_set<char>>> ab_list{
-        {true,{'a', 'b'}},
-        {true,{'0', '1'}},
-        {false,{}},
-        {false,{}},
+    vector<pair<bool, unordered_set<char>>> ab_list{
+        {true, {'a', 'b'}},
+        {true, {'0', '1'}},
+        {false, {}},
+        {false, {}},
     };
     vector<DFANei> nei_list{
         {
@@ -56,110 +56,110 @@ int main() {
         1,
         1,
     };
-    vector<vector<pair<string,bool>>> strs_list{
+    vector<vector<pair<string, bool>>> strs_list{
         {
-            {"",false},
-            {" ",false},
-            {"123",false},
-            {"123aabb",false},
-            {"a",false},
-            {"b",false},
-            {"ab",false},
-            {"abababa",false},
-            {"aa",true},
-            {"aaa",true},
-            {"bb",true},
-            {"bbb",true},
-            {"aabb",true},
-            {"ababb",true},
-            {"ababaa",true},
-            {"abaaababab",true},
-            {"ababbbabab",true},
+            {"", false},
+            {" ", false},
+            {"123", false},
+            {"123aabb", false},
+            {"a", false},
+            {"b", false},
+            {"ab", false},
+            {"abababa", false},
+            {"aa", true},
+            {"aaa", true},
+            {"bb", true},
+            {"bbb", true},
+            {"aabb", true},
+            {"ababb", true},
+            {"ababaa", true},
+            {"abaaababab", true},
+            {"ababbbabab", true},
         },
         {
-            {"",false},
-            {" ",false},
-            {"123",false},
-            {"1230011",false},
-            {"123001100",false},
-            {"0",false},
-            {"1",false},
-            {"01",false},
-            {"0101010",false},
-            {"11",false},
-            {"111",false},
-            {"01011",false},
-            {"0100010101",false},
-            {"0101110101",false},
-            {"00",true},
-            {"000",true},
-            {"1100",true},
-            {"010100",true},
+            {"", false},
+            {" ", false},
+            {"123", false},
+            {"1230011", false},
+            {"123001100", false},
+            {"0", false},
+            {"1", false},
+            {"01", false},
+            {"0101010", false},
+            {"11", false},
+            {"111", false},
+            {"01011", false},
+            {"0100010101", false},
+            {"0101110101", false},
+            {"00", true},
+            {"000", true},
+            {"1100", true},
+            {"010100", true},
         },
         {
-            {"",true},
-            {" ",false},
-            {"1",false},
-            {"a",false},
-            {"123",false},
-            {"abc",false},
+            {"", true},
+            {" ", false},
+            {"1", false},
+            {"a", false},
+            {"123", false},
+            {"abc", false},
         },
         {
-            {"",false},
-            {" ",false},
-            {"123",false},
-            {"123aabb",false},
-            {"a",false},
-            {"b",false},
-            {"ab",false},
-            {"abababa",false},
-            {"aa",false},
-            {"aaa",false},
-            {"bb",false},
-            {"bbb",false},
-            {"aabb",false},
-            {"ababb",false},
-            {"ababaa",false},
-            {"abaaababab",false},
-            {"ababbbabab",false},
-            {"",false},
-            {" ",false},
-            {"123",false},
-            {"1230011",false},
-            {"123001100",false},
-            {"0",false},
-            {"1",false},
-            {"01",false},
-            {"0101010",false},
-            {"11",false},
-            {"111",false},
-            {"01011",false},
-            {"0100010101",false},
-            {"0101110101",false},
-            {"00",false},
-            {"000",false},
-            {"1100",false},
-            {"010100",false},
-            {"",false},
-            {" ",false},
-            {"1",false},
-            {"a",false},
-            {"123",false},
-            {"abc",false},
+            {"", false},
+            {" ", false},
+            {"123", false},
+            {"123aabb", false},
+            {"a", false},
+            {"b", false},
+            {"ab", false},
+            {"abababa", false},
+            {"aa", false},
+            {"aaa", false},
+            {"bb", false},
+            {"bbb", false},
+            {"aabb", false},
+            {"ababb", false},
+            {"ababaa", false},
+            {"abaaababab", false},
+            {"ababbbabab", false},
+            {"", false},
+            {" ", false},
+            {"123", false},
+            {"1230011", false},
+            {"123001100", false},
+            {"0", false},
+            {"1", false},
+            {"01", false},
+            {"0101010", false},
+            {"11", false},
+            {"111", false},
+            {"01011", false},
+            {"0100010101", false},
+            {"0101110101", false},
+            {"00", false},
+            {"000", false},
+            {"1100", false},
+            {"010100", false},
+            {"", false},
+            {" ", false},
+            {"1", false},
+            {"a", false},
+            {"123", false},
+            {"abc", false},
         },
     };
-    auto loops = std::min({states_list.size(), finals_list.size(), ab_list.size(), nei_list.size(), start_list.size(),strs_list.size()});
+    auto loops = std::min({states_list.size(), finals_list.size(), ab_list.size(), nei_list.size(), start_list.size(), strs_list.size()});
 
     for (std::size_t i = 0; i < loops; ++i) {
         // 用例初始化DFA
         unordered_set<state> &S = states_list[i], F = finals_list[i];
-        pair<bool,unordered_set<char>> &AB = ab_list[i];
+        pair<bool, unordered_set<char>> &AB = ab_list[i];
         DFANei &nei = nei_list[i];
         state &start = start_list[i], final_state = 0;
         Tom::DFA *test;
-        if(AB.first){
+        if (AB.first) {
             test = new Tom::DFA(S, AB.second, nei, start, F);
-        }else{
+        } else {
             test = new Tom::DFA(S, nei, start, F);
         }
 
@@ -178,12 +178,12 @@ int main() {
                   << test->show() << '\n';
 
         // 测试
-        const auto& strs =strs_list[i];
-        for(const auto & str_res:strs){
-            if(str_res.second!=test->accept(str_res.first, final_state, err_msg)){
-                std::cerr<<str<<" should have been "<<(str_res.second==true?"accepted":"refused")
-                <<" but actually "<<(str_res.second==true?"refused":"accepted")
-                <<", err_code = "<<final_state<<" err_msg = "<< err_msg << '\n';
+        const auto &strs = strs_list[i];
+        for (const auto &str_res : strs) {
+            if (str_res.second != test->accept(str_res.first, final_state, err_msg)) {
+                std::cerr << str << " should have been " << (str_res.second == true ? "accepted" : "refused")
+                          << " but actually " << (str_res.second == true ? "refused" : "accepted")
+                          << ", err_code = " << final_state << " err_msg = " << err_msg << '\n';
                 delete test;
                 return -1;
             }
@@ -192,6 +192,6 @@ int main() {
         delete test;
         std::cout << '\n';
     }
-    std::cout<<"PASS!";
+    std::cout << "PASS!";
     return 0;
 }
