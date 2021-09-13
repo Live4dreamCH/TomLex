@@ -283,6 +283,9 @@ int main() {
             }
         }
 
+        Tom::DFA *dfa_ptr = nullptr;
+        test->to_DFA(dfa_ptr, err_msg);
+
         delete test;
         std::cout << '\n';
     }

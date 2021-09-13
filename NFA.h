@@ -18,6 +18,8 @@ namespace Tom {
         // 若出错, 返回nullptr
         const unordered_set<state> *func(const state &from, const string &str, string &err_msg) const;
 
+        // 寻找比curr大的未使用状态
+        // 若未找到, 返回curr
         state get_next_unused_state(const state &curr) const;
 
     public:
@@ -42,6 +44,9 @@ namespace Tom {
         // 展示NFA结构
         string show() const;
 
+        // NFA转DFA
+        // 初始化target指针
+        // 成功返回0
         int to_DFA(DFA *target, string &err_msg) const;
     };
 } // namespace Tom

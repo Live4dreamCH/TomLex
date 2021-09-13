@@ -138,5 +138,75 @@ string NFA::show() const {
 }
 
 int NFA::to_DFA(DFA *target, string &err_msg) const {
+    // 拷贝需要修改的变量
+    NFANei temp_trans;
+    unordered_set<state> temp_states = states;
+
+    // 添加唯一初态和终态
+    state start_state = get_next_unused_state(0);
+    if (start_state == 0) {
+        err_msg = "no unused state! cannot add a state";
+        return -1;
+    }
+    temp_states.emplace(start_state);
+    temp_trans[start_state].emplace("", starts);
+
+    state final_state = get_next_unused_state(start_state);
+    if (final_state == start_state) {
+        err_msg = "no unused state! cannot add a state";
+        return -2;
+    }
+    temp_states.emplace(final_state);
+    for (const auto &end : final_states) {
+        temp_trans[end][""].emplace(final_state);
+    }
+
+    // 拆分字符串
+    state unused_state = final_state;
+    // if (final_state == unused_state) {
+    //     err_msg = "no unused state! cannot add a state";
+    //     return -3;
+    // }
+    // temp_states.emplace(unused_state);
+    state prev = unused_state;
+    for (auto &it_from : trans) {
+        auto &from = it_from.first;
+        for (auto &it_str : it_from.second) {
+            auto &str = it_str.first;
+            auto &to = it_str.second;
+            if (str.size() > 1) {
+                unused_state = get_next_unused_state(unused_state);
+                if (prev == unused_state) {
+                    err_msg = "no unused state! cannot add a state";
+                    return -3;
+                }
+                prev = unused_state;
+                temp_states.emplace(unused_state);
+                // temp_trans[from][str]
+                for (auto &ch : str) {
+                    // 前后连接
+                }
+            } else {
+                temp_trans[from].emplace(str, to);
+            }
+        }
+    }
+    // target = nullptr;
+    // target++;
     return 0;
+}
+
+state NFA::get_next_unused_state(const state &curr) const {
+    if (curr == __INT_MAX__) {
+        return curr;
+    }
+    for (state i = curr + 1; i < __INT_MAX__; ++i) {
+        if (states.find(i) == states.end()) {
+            return i;
+        }
+    }
+    if (states.find(__INT_MAX__) == states.end()) {
+        return __INT_MAX__;
+    }
+    return curr;
 }
