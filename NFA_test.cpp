@@ -15,11 +15,12 @@ int main() {
     // 1. 含aa或bb
     // 2. 至少一个a连接至少一个b
     // 3. 汉字
-    // 4. 不识别任何字符串
+    // 4. 测试epsilon闭包
     vector<unordered_set<state>> states_list{
         {0, 1, 2},
         {0, 1, 2},
         {0, 1, 2},
+        {0, 1, 2, 3, 4, 5, 6},
         // {1, 2, 3, 4},
         // {1},
         // {1},
@@ -28,6 +29,7 @@ int main() {
         {1, 2},
         {2},
         {2},
+        {5, 6},
         // {4},
         // {1},
         // {},
@@ -35,6 +37,7 @@ int main() {
     vector<pair<bool, unordered_set<char>>> ab_list{
         {true, {'a', 'b'}},
         {true, {'a', 'b'}},
+        {false, {}},
         {false, {}},
         // {true,{'0', '1'}},
         // {false,{}},
@@ -76,6 +79,13 @@ int main() {
                     {"打游戏", {2}},
                 }},
         },
+        {{0, {{"", {1}}}}, {1, {
+                                   {"", {2}},
+                                   {"few", {3}},
+                               }},
+         {2, {
+                 {"", {4}},
+             }}}
         // {
         //     {1, {{'0', 2}, {'1', 3}}},
         //     {2, {{'0', 4}, {'1', 3}}},
@@ -86,6 +96,7 @@ int main() {
         // {},
     };
     vector<unordered_set<state>> start_list{
+        {0},
         {0},
         {0},
         {0},
@@ -166,6 +177,7 @@ int main() {
             {"你在打游戏", true},
             {"他在在打游戏", true},
         },
+        {},
         // {
         //     {"",false},
         //     {" ",false},
@@ -283,6 +295,16 @@ int main() {
             }
         }
 
+        // 闭包
+        if (i == 3) {
+            auto res = test->epsilon_closure_test({0});
+            for (auto &epsilon_state : *res) {
+                std::cout << epsilon_state << ' ';
+            }
+            std::cout << '\n';
+        }
+
+        // 转DFA
         Tom::DFA *dfa_ptr = nullptr;
         test->to_DFA(dfa_ptr, err_msg);
 

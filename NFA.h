@@ -19,8 +19,11 @@ namespace Tom {
         const unordered_set<state> *func(const state &from, const string &str, string &err_msg) const;
 
         // 寻找比curr大的未使用状态
-        // 若未找到, 返回curr
-        state get_next_unused_state(const state &curr) const;
+        // 若未找到, 返回-1
+        state get_next_unused_state(const state &curr, string &err_msg) const;
+
+        // 求state_set的ε闭包
+        unordered_set<state> *epsilon_closure(const unordered_set<state> &state_set, const NFANei &in_trans) const;
 
     public:
         NFA() = default;
@@ -48,5 +51,8 @@ namespace Tom {
         // 初始化target指针
         // 成功返回0
         int to_DFA(DFA *target, string &err_msg) const;
+
+        // 仅供测试
+        unordered_set<state> *epsilon_closure_test(const unordered_set<state> &state_set) const { return epsilon_closure(state_set, trans); }
     };
 } // namespace Tom

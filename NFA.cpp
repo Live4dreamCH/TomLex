@@ -138,22 +138,20 @@ string NFA::show() const {
 }
 
 int NFA::to_DFA(DFA *target, string &err_msg) const {
-    // 拷贝需要修改的变量
+    // 拷贝需要修改的NFA属性
     NFANei temp_trans;
     unordered_set<state> temp_states = states;
 
     // 添加唯一初态和终态
-    state start_state = get_next_unused_state(0);
-    if (start_state == 0) {
-        err_msg = "no unused state! cannot add a state";
+    state start_state = get_next_unused_state(0, err_msg);
+    if (start_state == -1) {
         return -1;
     }
     temp_states.emplace(start_state);
     temp_trans[start_state].emplace("", starts);
 
-    state final_state = get_next_unused_state(start_state);
-    if (final_state == start_state) {
-        err_msg = "no unused state! cannot add a state";
+    state final_state = get_next_unused_state(start_state, err_msg);
+    if (final_state == -1) {
         return -2;
     }
     temp_states.emplace(final_state);
@@ -161,44 +159,47 @@ int NFA::to_DFA(DFA *target, string &err_msg) const {
         temp_trans[end][""].emplace(final_state);
     }
 
-    // 拆分字符串
+    // 拆分边上的字符串为单个字符
     state unused_state = final_state;
-    // if (final_state == unused_state) {
-    //     err_msg = "no unused state! cannot add a state";
-    //     return -3;
-    // }
-    // temp_states.emplace(unused_state);
-    state prev = unused_state;
+    // 上一个状态, 类似链表操作
+    state prev;
+    // 逐边检查, 消除字符串边, 并复制到temp_trans中
     for (auto &it_from : trans) {
         auto &from = it_from.first;
+        prev = from;
         for (auto &it_str : it_from.second) {
             auto &str = it_str.first;
             auto &to = it_str.second;
             if (str.size() > 1) {
-                unused_state = get_next_unused_state(unused_state);
-                if (prev == unused_state) {
-                    err_msg = "no unused state! cannot add a state";
-                    return -3;
-                }
-                prev = unused_state;
-                temp_states.emplace(unused_state);
-                // temp_trans[from][str]
-                for (auto &ch : str) {
+                for (size_t i = 0; i < str.size() - 1; ++i) {
                     // 前后连接
+                    unused_state = get_next_unused_state(unused_state, err_msg);
+                    if (-1 == unused_state) {
+                        return -3;
+                    }
+                    temp_states.emplace(unused_state);
+                    temp_trans[prev][string(1, str[i])].emplace(unused_state);
+                    prev = unused_state;
                 }
+                temp_trans[prev].emplace(string(1, str.back()), to);
             } else {
                 temp_trans[from].emplace(str, to);
             }
         }
     }
-    // target = nullptr;
-    // target++;
+
+    // 子集法消除ε弧和多目标
+    // 新DFA的状态->旧NFA的状态子集
+    unordered_map<state, unordered_set<state>> state_map;
+    target = nullptr;
+    target++;
     return 0;
 }
 
-state NFA::get_next_unused_state(const state &curr) const {
+state NFA::get_next_unused_state(const state &curr, string &err_msg) const {
     if (curr == __INT_MAX__) {
-        return curr;
+        err_msg = "no unused state! cannot add a state";
+        return -1;
     }
     for (state i = curr + 1; i < __INT_MAX__; ++i) {
         if (states.find(i) == states.end()) {
@@ -208,5 +209,35 @@ state NFA::get_next_unused_state(const state &curr) const {
     if (states.find(__INT_MAX__) == states.end()) {
         return __INT_MAX__;
     }
-    return curr;
+    err_msg = "no unused state! cannot add a state";
+    return -1;
+}
+
+// BFS, 仅限在ε弧上移动
+// 将所有途径的状态放入返回值中
+unordered_set<state> *NFA::epsilon_closure(const unordered_set<state> &state_set, const NFANei &in_trans) const {
+    unordered_set<state> *closure = new unordered_set<state>(state_set);
+    // 输入集合的每一个元素, 都是BFS的起点
+    for (auto &s : state_set) {
+        // BFS队列
+        queue<state> fifo;
+        fifo.emplace(s);
+        while (!fifo.empty()) {
+            // 扩展
+            if (in_trans.find(fifo.front()) != in_trans.end()) {
+                for (auto &edge : in_trans.at(fifo.front())) {
+                    if (edge.first == "") {
+                        for (auto &to : edge.second) {
+                            if (closure->find(to) == closure->end()) {
+                                closure->emplace(to);
+                                fifo.emplace(to);
+                            }
+                        }
+                    }
+                }
+            }
+            fifo.pop();
+        }
+    }
+    return closure;
 }
