@@ -1,5 +1,6 @@
 #pragma once
 #include "DFA.h"
+#include <memory>
 
 namespace Tom {
     // NFA邻接表 源状态+字符串->目标状态集合
@@ -21,9 +22,6 @@ namespace Tom {
         // 寻找比curr大的未使用状态
         // 若未找到, 返回-1
         state get_next_unused_state(const state &curr, string &err_msg) const;
-
-        // 求state_set的ε闭包
-        unordered_set<state> *epsilon_closure(const unordered_set<state> &state_set, const NFANei &in_trans) const;
 
     public:
         NFA() = default;
@@ -51,8 +49,9 @@ namespace Tom {
         // 初始化target指针
         // 成功返回0
         int to_DFA(DFA *target, string &err_msg) const;
-
-        // 仅供测试
-        unordered_set<state> *epsilon_closure_test(const unordered_set<state> &state_set) const { return epsilon_closure(state_set, trans); }
     };
+
+    using std::shared_ptr;
+    shared_ptr<unordered_set<state>> epsilon_closure(const unordered_set<state> &state_set, const NFANei &in_trans);
+    shared_ptr<unordered_set<state>> Ia(const unordered_set<state> &I, const NFANei &in_trans, const string &a);
 } // namespace Tom

@@ -1,8 +1,11 @@
 #include "NFA.h"
+#include <memory>
 #include <queue>
 #include <tuple>
 using std::get;
+using std::make_shared;
 using std::queue;
+using std::shared_ptr;
 using std::to_string;
 using std::tuple;
 using namespace Tom;
@@ -191,8 +194,20 @@ int NFA::to_DFA(DFA *target, string &err_msg) const {
     // 子集法消除ε弧和多目标
     // 新DFA的状态->旧NFA的状态子集
     unordered_map<state, unordered_set<state>> state_map;
-    target = nullptr;
-    target++;
+    DFANei new_trans;
+    queue<state> fifo;
+    state new_state = 0;
+    auto start_epsilon = epsilon_closure({start_state}, temp_trans);
+    state_map.emplace(new_state, *start_epsilon);
+    ++new_state;
+    // todo
+    // Ia扩展每一个状态子集
+    // 填写state_map和new_trans
+    // 生成新DFA
+    // 返回类型应为智能指针
+
+    // target = nullptr;
+    // target++;
     return 0;
 }
 
@@ -213,10 +228,11 @@ state NFA::get_next_unused_state(const state &curr, string &err_msg) const {
     return -1;
 }
 
+// 求state_set的ε闭包
 // BFS, 仅限在ε弧上移动
 // 将所有途径的状态放入返回值中
-unordered_set<state> *NFA::epsilon_closure(const unordered_set<state> &state_set, const NFANei &in_trans) const {
-    unordered_set<state> *closure = new unordered_set<state>(state_set);
+shared_ptr<unordered_set<state>> Tom::epsilon_closure(const unordered_set<state> &state_set, const NFANei &in_trans) {
+    shared_ptr<unordered_set<state>> closure = make_shared<unordered_set<state>>(state_set);
     // 输入集合的每一个元素, 都是BFS的起点
     for (auto &s : state_set) {
         // BFS队列
@@ -240,4 +256,25 @@ unordered_set<state> *NFA::epsilon_closure(const unordered_set<state> &state_set
         }
     }
     return closure;
+}
+
+// Ia运算
+// 对输入状态子集I, 先使用字符串a移动一次, 再求ε闭包
+shared_ptr<unordered_set<state>> Tom::Ia(const unordered_set<state> &I, const NFANei &in_trans, const string &a) {
+    // I做一次a移动后的结果为J
+    unordered_set<state> J;
+    for (auto &from : I) {
+        if (in_trans.find(from) == in_trans.end()) {
+            continue;
+        }
+        auto &edge = in_trans.at(from);
+        if (edge.find(a) == edge.end()) {
+            continue;
+        }
+        auto &tos = edge.at(a);
+        for (auto &to : tos) {
+            J.emplace(to);
+        }
+    }
+    return epsilon_closure(J, in_trans);
 }

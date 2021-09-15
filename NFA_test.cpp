@@ -297,7 +297,7 @@ int main() {
 
         // 闭包
         if (i == 3) {
-            auto res = test->epsilon_closure_test({0});
+            auto res = Tom::epsilon_closure({0}, nei);
             for (auto &epsilon_state : *res) {
                 std::cout << epsilon_state << ' ';
             }
