@@ -5,6 +5,7 @@
 namespace Tom {
     // NFA邻接表 源状态+字符串->目标状态集合
     using NFANei = unordered_map<state, unordered_map<string, unordered_set<state>>>;
+    using std::shared_ptr;
     class NFA {
     private:
         unordered_set<state> states;
@@ -48,10 +49,9 @@ namespace Tom {
         // NFA转DFA
         // 初始化target指针
         // 成功返回0
-        int to_DFA(DFA *target, string &err_msg) const;
+        int to_DFA(shared_ptr<DFA> target, string &err_msg) const;
     };
 
-    using std::shared_ptr;
     shared_ptr<unordered_set<state>> epsilon_closure(const unordered_set<state> &state_set, const NFANei &in_trans);
     shared_ptr<unordered_set<state>> Ia(const unordered_set<state> &I, const NFANei &in_trans, const string &a);
 } // namespace Tom

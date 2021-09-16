@@ -305,8 +305,9 @@ int main() {
         }
 
         // 转DFA
-        Tom::DFA *dfa_ptr = nullptr;
+        std::shared_ptr<Tom::DFA> dfa_ptr;
         test->to_DFA(dfa_ptr, err_msg);
+        // todo: 测试DFA
 
         delete test;
         std::cout << '\n';

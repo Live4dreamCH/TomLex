@@ -26,11 +26,11 @@ namespace Tom {
 
     public:
         // 四元组定义，字母表为全体字符
-        DFA(unordered_set<state> &S, DFANei &f, state &S0, unordered_set<state> &F)
+        DFA(const unordered_set<state> &S, const DFANei &f, const state &S0, const unordered_set<state> &F)
             : states(S), use_alphabet(false), trans(f), start(S0), final_states(F) {}
 
         // 五元组定义
-        DFA(unordered_set<state> &S, unordered_set<char> &AB, DFANei &f, state &S0, unordered_set<state> &F)
+        DFA(const unordered_set<state> &S, const unordered_set<char> &AB, const DFANei &f, const state &S0, const unordered_set<state> &F)
             : states(S), use_alphabet(true), alphabet(AB), trans(f), start(S0), final_states(F) {}
 
         // 校验DFA合法性, 返回0则合法

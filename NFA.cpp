@@ -140,7 +140,7 @@ string NFA::show() const {
     return "";
 }
 
-int NFA::to_DFA(DFA *target, string &err_msg) const {
+int NFA::to_DFA(shared_ptr<DFA> target, string &err_msg) const {
     // 拷贝需要修改的NFA属性
     NFANei temp_trans;
     unordered_set<state> temp_states = states;
@@ -195,19 +195,69 @@ int NFA::to_DFA(DFA *target, string &err_msg) const {
     // 新DFA的状态->旧NFA的状态子集
     unordered_map<state, unordered_set<state>> state_map;
     DFANei new_trans;
+    // BFS队列
     queue<state> fifo;
+    // 自增的DFA状态
     state new_state = 0;
-    auto start_epsilon = epsilon_closure({start_state}, temp_trans);
-    state_map.emplace(new_state, *start_epsilon);
+    // DFA的终态
+    unordered_set<state> new_ends;
+    // epsilon闭包或Ia运算的结果
+    auto epsilon = epsilon_closure({start_state}, temp_trans);
+    state_map.emplace(new_state, *epsilon);
+    fifo.emplace(new_state);
     ++new_state;
-    // todo
     // Ia扩展每一个状态子集
     // 填写state_map和new_trans
     // 生成新DFA
     // 返回类型应为智能指针
+    while (!fifo.empty()) {
+        // 统计所有出边上的字符
+        unordered_set<string> chars;
+        auto &old_states = state_map.at(fifo.front());
+        for (auto &s : old_states) {
+            if (temp_trans.find(s) == temp_trans.end()) {
+                continue;
+            }
+            for (auto &edge : temp_trans.at(s)) {
+                chars.emplace(edge.first);
+            }
+        }
+        // 扩展
+        for (auto &ch : chars) {
+            epsilon = Ia(old_states, temp_trans, ch);
+            state next = -1;
+            // 去重
+            for (auto &maps : state_map) {
+                if (maps.second == *epsilon) {
+                    next = maps.first;
+                    break;
+                }
+            }
+            if (next != -1) {
+                new_trans[fifo.front()].emplace(ch[0], next);
+                continue;
+            }
+            state_map.emplace(new_state, *epsilon);
+            fifo.emplace(new_state);
+            new_trans[fifo.front()].emplace(ch[0], new_state);
+            if (epsilon->find(final_state) != epsilon->end()) {
+                new_ends.emplace(new_state);
+            }
+            ++new_state;
+        }
+        fifo.pop();
+    }
 
-    // target = nullptr;
-    // target++;
+    unordered_set<state> new_states;
+    for (state i = 0; i < new_state; ++i) {
+        new_states.emplace(i);
+    }
+    new_state = 0;
+    if (use_alphabet) {
+        target = make_shared<DFA>(new_states, alphabet, new_trans, new_state, new_ends);
+    } else {
+        target = make_shared<DFA>(new_states, new_trans, new_state, new_ends);
+    }
     return 0;
 }
 
