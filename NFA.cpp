@@ -140,7 +140,7 @@ string NFA::show() const {
     return "";
 }
 
-int NFA::to_DFA(shared_ptr<DFA> target, string &err_msg) const {
+int NFA::to_DFA(shared_ptr<DFA> &target, string &err_msg) const {
     // 拷贝需要修改的NFA属性
     NFANei temp_trans;
     unordered_set<state> temp_states = states;

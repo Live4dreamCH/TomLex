@@ -306,8 +306,22 @@ int main() {
 
         // 转DFA
         std::shared_ptr<Tom::DFA> dfa_ptr;
-        test->to_DFA(dfa_ptr, err_msg);
+        int err_code = test->to_DFA(dfa_ptr, err_msg);
+        if (err_code != 0) {
+            std::cerr << "to DFA wrong! error code = " << err_code << ", error msg = " << err_msg << '\n';
+        }
         // todo: 测试DFA
+        for (const auto &str_res : strs) {
+            err_msg.clear();
+            const auto &str = str_res.first;
+            const auto &res = str_res.second;
+            if (res != dfa_ptr->accept(str, final_state, err_msg)) {
+                std::cerr << str << " should have been " << (res == true ? "accepted" : "refused")
+                          << " but actually " << (res == true ? "refused" : "accepted")
+                          << ", err_code = " << final_state << " err_msg = " << err_msg << '\n';
+                return -1;
+            }
+        }
 
         delete test;
         std::cout << '\n';

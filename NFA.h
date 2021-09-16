@@ -49,7 +49,7 @@ namespace Tom {
         // NFA转DFA
         // 初始化target指针
         // 成功返回0
-        int to_DFA(shared_ptr<DFA> target, string &err_msg) const;
+        int to_DFA(shared_ptr<DFA> &target, string &err_msg) const;
     };
 
     shared_ptr<unordered_set<state>> epsilon_closure(const unordered_set<state> &state_set, const NFANei &in_trans);

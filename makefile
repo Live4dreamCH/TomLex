@@ -22,7 +22,7 @@ DFA.obj: DFA.cpp
 	$(cppc) -c DFA.cpp -o DFA.obj
 
 NFA_test.out: NFA.obj NFA_test.cpp
-	$(cppc) NFA.obj NFA_test.cpp -o NFA_test.out
+	$(cppc) NFA_test.cpp NFA.obj -o NFA_test.out
 NFA.obj: NFA.cpp DFA.obj
 	$(cppc) -c NFA.cpp DFA.obj -o NFA.obj
 
