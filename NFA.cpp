@@ -169,10 +169,10 @@ int NFA::to_DFA(shared_ptr<DFA> &target, string &err_msg) const {
     // 逐边检查, 消除字符串边, 并复制到temp_trans中
     for (auto &it_from : trans) {
         auto &from = it_from.first;
-        prev = from;
         for (auto &it_str : it_from.second) {
             auto &str = it_str.first;
             auto &to = it_str.second;
+            prev = from;
             if (str.size() > 1) {
                 for (size_t i = 0; i < str.size() - 1; ++i) {
                     // 前后连接
@@ -186,7 +186,9 @@ int NFA::to_DFA(shared_ptr<DFA> &target, string &err_msg) const {
                 }
                 temp_trans[prev].emplace(string(1, str.back()), to);
             } else {
-                temp_trans[from].emplace(str, to);
+                for (auto &t : to) {
+                    temp_trans[from][str].emplace(t);
+                }
             }
         }
     }
@@ -219,7 +221,8 @@ int NFA::to_DFA(shared_ptr<DFA> &target, string &err_msg) const {
                 continue;
             }
             for (auto &edge : temp_trans.at(s)) {
-                chars.emplace(edge.first);
+                if (!edge.first.empty())
+                    chars.emplace(edge.first);
             }
         }
         // 扩展
